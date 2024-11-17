@@ -3,8 +3,6 @@ from tkinter import font
 import util.util_ventana as util_ventana
 from config import constantes as cons
 import math
-import ttkbootstrap as ttk
-from ttkbootstrap.constants import *
 
 class Calculadora(tk.Tk):
 
@@ -12,6 +10,7 @@ class Calculadora(tk.Tk):
         super().__init__()
         self.config_window()
         self.construir_widget()
+        self.construir_widget_toggle()
 
     def config_window(self):
         self.title('Calculadora Python')
@@ -34,25 +33,25 @@ class Calculadora(tk.Tk):
         
         self.entry = tk.Entry(self, width=12, font=(
             'Arial', 40), bd=0, fg=cons.COLOR_DE_TEXTO_DARK, bg=cons.COLOR_CAJA_TEXTO_DARK, justify='right')
-        self.entry.grid(row=2, column=0, columnspan=4, padx=10, pady=10,sticky='nsew')  
+        self.entry.grid(row=1, column=0, columnspan=4, padx=10, pady=10,sticky='nsew')  
 
         buttons = [
             '√', 'π', '^', '!',
-            'AC', '<', '%', '/',
+            'AC','<', '%', '/',
             '7', '8', '9', '*',
             '4', '5', '6', '-',
             '1', '2', '3', '+',
             '0', '.', '=',
         ]
 
-        row_val = 3 
+        row_val = 2 
         col_val = 0
 
 
         roboto_font = font.Font(family="Roboto", size=16)
 
         for button in buttons:
-            if button in ['=', '*', '/', '-', '+', 'C', '<', '%','√','π','^','!']:
+            if button in ['=', '*', '/', '-', '+', 'AC', '<', '%','√','π','^','!']:
                 color_fondo = cons.COLOR_BOTONES_ESPECIALES_DARK
                 button_font = font.Font(size=16, weight='bold')
             else:
@@ -73,6 +72,57 @@ class Calculadora(tk.Tk):
             if col_val > 3:
                 col_val = 0
                 row_val += 1
+                
+    def construir_widget_toggle(self):
+        roboto_font = font.Font(family="Roboto", size=12)
+        self.dark_theme = True
+        self.theme_button = tk.Button(self, text="Modo Claro", width=12,  font=roboto_font, bd=0, borderwidth=0,
+                                      highlightthickness=0, relief=tk.FLAT, command=self.toggle_theme, bg=cons.COLOR_BOTONES_DARK,fg=cons.COLOR_DE_TEXTO_DARK)
+        self.theme_button.grid(row=0, column=0, columnspan=2,
+                               pady=0, padx=0, sticky="nw") 
+
+
+    def toggle_theme(self):
+        if self.dark_theme:
+            # Cambiar a tema claro
+            self.configure(bg=cons.COLOR_DE_FONDO_LIGHT)
+            self.entry.config(fg=cons.COLOR_DE_TEXTO_LIGHT,
+                            bg=cons.COLOR_CAJA_TEXTO_LIGHT)
+            self.operation_label.config(
+                fg=cons.COLOR_DE_TEXTO_LIGHT, bg=cons.COLOR_DE_FONDO_LIGHT)
+            self.theme_button.configure(
+                text="Modo Oscuro", relief=tk.SUNKEN, bg=cons.COLOR_BOTONES_ESPECIALES_LIGHT)
+
+            # Cambiar colores de botones
+            for widget in self.winfo_children():
+                if isinstance(widget, tk.Button):
+                    if widget.cget("text") in ['=', '*', '/', '-', '+', 'AC', '<', '%', '√', 'π', '^', '!']:
+                        widget.config(bg=cons.COLOR_BOTONES_ESPECIALES_LIGHT,
+                                    fg=cons.COLOR_DE_TEXTO_LIGHT)
+                    else:
+                        widget.config(bg=cons.COLOR_BOTONES_LIGHT,
+                                    fg=cons.COLOR_DE_TEXTO_LIGHT)
+        else:
+            # Cambiar a tema oscuro
+            self.configure(bg=cons.COLOR_DE_FONDO_DARK)
+            self.entry.config(fg=cons.COLOR_DE_TEXTO_DARK,
+                            bg=cons.COLOR_CAJA_TEXTO_DARK)
+            self.operation_label.config(
+                fg=cons.COLOR_DE_TEXTO_DARK, bg=cons.COLOR_DE_FONDO_DARK)
+            self.theme_button.configure(
+                text="Modo Claro", relief=tk.RAISED, bg=cons.COLOR_BOTONES_ESPECIALES_DARK)
+
+            # Cambiar colores de botones
+            for widget in self.winfo_children():
+                if isinstance(widget, tk.Button):
+                    if widget.cget("text") in ['=', '*', '/', '-', '+', 'AC', '<', '%', '√', 'π', '^', '!']:
+                        widget.config(bg=cons.COLOR_BOTONES_ESPECIALES_DARK,
+                                    fg=cons.COLOR_DE_TEXTO_DARK)
+                    else:
+                        widget.config(bg=cons.COLOR_BOTONES_DARK,
+                                    fg=cons.COLOR_DE_TEXTO_DARK)
+
+        self.dark_theme = not self.dark_theme
 
 
     def on_button_click(self, value):
